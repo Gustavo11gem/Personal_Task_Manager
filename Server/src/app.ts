@@ -1,13 +1,14 @@
-import dns from "node:dns";
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
-
+import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import mongoose from "mongoose";
 import taskRouter from "./routes/taskRoutes";
 
 const app = express(); // was to start up the server in express
 
-const PORT = 6741;
+const PORT = process.env.PORT || 6741;
+
+app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:5173" }));
 
 // convert every request to json (javascript format)
 app.use(express.json());
@@ -17,9 +18,7 @@ app.use(express.json());
 app.use("/api/tasks", taskRouter);
 
 const startServer = async () => {
-  await mongoose.connect(
-    "mongodb+srv://victorpascal00_db_user:UKAvqDUbekJw6YDw@cluster0.qvde5a4.mongodb.net/",
-  );
+  await mongoose.connect(process.env.MONGO_URL as string);
 
   console.log("Database connected successfully");
 
